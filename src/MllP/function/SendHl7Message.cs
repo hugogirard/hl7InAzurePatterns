@@ -31,6 +31,9 @@ namespace Contoso
             try
             {
                 int port = Environment.GetEnvironmentVariable("port") != null ? int.Parse(Environment.GetEnvironmentVariable("port")) : 1180;
+                string ipAddress = Environment.GetEnvironmentVariable("ipAddress") != null ? Environment.GetEnvironmentVariable("ipAddress") 
+                                                                                   : throw new ArgumentException("ipAddress is not set in the environment variables");
+
 
                 log.LogInformation("Client connecting on port: " + port);
 
@@ -51,7 +54,7 @@ namespace Contoso
 
                 TcpClient tcpClient = new ();
 
-                await tcpClient.ConnectAsync(new IPEndPoint(IPAddress.Loopback, port));  
+                await tcpClient.ConnectAsync(ipAddress, port);  
                 var byteBuffer = Encoding.UTF8.GetBytes(testHl7MessageToTransmit.ToString());
 
                 await tcpClient.GetStream().WriteAsync(byteBuffer, 0, byteBuffer.Length);

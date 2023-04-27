@@ -76,7 +76,7 @@ public class MllpServer : IMllpServer
             _logger.LogInformation("Client connected");
 
             // Keep receiving data from client until connection is closed
-            var totalBytesReceivedFromClient = 0;
+            //var totalBytesReceivedFromClient = 0;
             int bytesReceived;
             string hl7Data = string.Empty;
 
@@ -98,7 +98,7 @@ public class MllpServer : IMllpServer
 
                         //create a HL7 acknowledgement message
                         var ackMessage = GetSimpleAcknowledgementMessage(hl7MessageData);
-
+                        hl7Data = string.Empty;
                         Console.WriteLine(ackMessage);
 
                         //echo the received data back to the client
@@ -122,7 +122,7 @@ public class MllpServer : IMllpServer
                 // totalBytesReceivedFromClient += bytesReceived;
             }
 
-            _logger.LogInformation("Echoed {0} bytes back to the client.", totalBytesReceivedFromClient);
+            //_logger.LogInformation("Echoed {0} bytes back to the client.", totalBytesReceivedFromClient);
 
         }
         catch (System.Exception ex)
