@@ -51,8 +51,8 @@ public class MllpServer : IMllpServer
             _tcpListener = new TcpListener(IPAddress.Any, PORT);
 
             _tcpListener.Start();
-
-            _logger.LogInformation("Started listening on port 1080");
+            
+            _logger.LogInformation("Started listening on port ${PORT}");
         }
         catch (System.Exception ex)
         {

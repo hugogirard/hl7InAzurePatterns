@@ -1,0 +1,1 @@
+az group deployment create -g rg-soap-test --template-file main.bicep

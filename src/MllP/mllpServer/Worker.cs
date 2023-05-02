@@ -15,11 +15,21 @@ public class Worker : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        _logger.LogInformation("Starting MLLP Server");
+
         while (!stoppingToken.IsCancellationRequested)
         {
-            await _mlpServer.WaitingForClientAsync();
-            // _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
-            // await Task.Delay(1000, stoppingToken);
+            try
+            {
+                await _mlpServer.WaitingForClientAsync();    
+            }
+            catch (System.Exception ex)
+            {                
+                _logger.LogError("Error in ExecyuteAsync");
+                _logger.LogError(ex.Message);
+                await StopAsync(stoppingToken);
+            }
+            
         }
     }
 

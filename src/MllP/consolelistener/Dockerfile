@@ -1,6 +1,6 @@
 FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
 WORKDIR /app
-EXPOSE 1080 8080
+EXPOSE 1080
 
 ENV ASPNETCORE_URLS=http://+:1080
 
@@ -11,16 +11,16 @@ USER appuser
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
-COPY ["mllpServer.csproj", "./"]
-RUN dotnet restore "mllpServer.csproj"
+COPY ["consolelistener.csproj", "./"]
+RUN dotnet restore "consolelistener.csproj"
 COPY . .
 WORKDIR "/src/."
-RUN dotnet build "mllpServer.csproj" -c Release -o /app/build
+RUN dotnet build "consolelistener.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "mllpServer.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "consolelistener.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "mllpServer.dll"]
+ENTRYPOINT ["dotnet", "consolelistener.dll"]
