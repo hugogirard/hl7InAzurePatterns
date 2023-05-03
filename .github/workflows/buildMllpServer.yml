@@ -8,7 +8,8 @@ on:
 
 env:
   IMAGE_NAME: mllp-server
-
+  REGION: 'eastus' # You can change this to reflect the region where you deploy your ASE
+  
 jobs:
   build:
     name: Build container image
