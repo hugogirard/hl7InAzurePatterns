@@ -1,7 +1,7 @@
 targetScope = 'resourceGroup'
 
 param containerEnvironmentName string
-param location string
+param location string = 'eastus'
 param azureContainerRegistry string
 @secure()
 param azureContainerRegistryUsername string

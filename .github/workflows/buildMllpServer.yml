@@ -64,4 +64,4 @@ jobs:
         with:
           resourceGroupName: 'rg-healhcare-integration'                    
           template: ./bicep/mllpServer.bicep
-          parameters: containerEnvironmentName=${{ secrets.ACA_ENV_NAME }} location='eastus' image=${{ secrets.REGISTRY_SERVER }}/mlppserver:${{ github.sha }} azureContainerRegistry=${{ secrets.REGISTRY_SERVER }}  azureContainerRegistryUsername=${{ secrets.REGISTRY_USERNAME }} azureContainerRegistryPassword=${{ secrets.REGISTRY_PASSWORD }}
+          parameters: containerEnvironmentName=${{ secrets.ACA_ENV_NAME }} image=${{ secrets.REGISTRY_SERVER }}/mlppserver:${{ github.sha }} azureContainerRegistry=${{ secrets.REGISTRY_SERVER }}  azureContainerRegistryUsername=${{ secrets.REGISTRY_USERNAME }} azureContainerRegistryPassword=${{ secrets.REGISTRY_PASSWORD }}
