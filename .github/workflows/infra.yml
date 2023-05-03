@@ -7,7 +7,7 @@ jobs:
   create-azure-resources:
 
     env:
-      DEPLOYMENT_NAME: healthcare-deployment
+      DEPLOYMENT_NAME: healthhg-deployment
       REGION: 'eastus' # You can change this to reflect the region where you deploy your ASE
 
     runs-on: ubuntu-latest
