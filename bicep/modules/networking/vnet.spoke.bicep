@@ -22,7 +22,7 @@ resource vnet 'Microsoft.Network/virtualNetworks@2021-05-01' = {
       {
         name: 'snet-aca'
         properties: {
-          addressPrefix: '11.0.1.0/23'
+          addressPrefix: '11.0.0.0/23'
         }
       }
       {
