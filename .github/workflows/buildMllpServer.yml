@@ -36,14 +36,20 @@ jobs:
           username: ${{ secrets.REGISTRY_USERNAME }}
           password: ${{ secrets.REGISTRY_PASSWORD }}      
 
+      - name: Build docker image
+        run: |
+          docker build -t ${{ secrets.REGISTRY_SERVER }}/mlppserver:${{ github.sha }} .
+        working-directory: ./src/MllP/mllpServer  
+
       - name: Deploy to container registry
         run: |
-          docker push ${{ secrets.REGISTRY_SERVER }}/mlppserver:${{ github.sha }}   
+          docker push ${{ secrets.REGISTRY_SERVER }}/mlppserver:${{ github.sha }}
+        working-directory: ./src/MllP/mllpServer  
 
-      - name: Build and push container image to registry
-        uses: docker/build-push-action@v2
-        with:       
-          context: ./master/src/MllP/mllpServer/Dockerfile
-          push: true
-          tags: ${{ secrets.REGISTRY_SERVER  }}/mllpserver:${{ github.sha }}
-          file: ./master/src/MllP/mllpServer/Dockerfile
+      # - name: Build and push container image to registry
+      #   uses: docker/build-push-action@v2
+      #   with:       
+      #     context: ./master/src/MllP/mllpServer/Dockerfile
+      #     push: true
+      #     tags: ${{ secrets.REGISTRY_SERVER  }}/mllpserver:${{ github.sha }}
+      #     file: ./master/src/MllP/mllpServer/Dockerfile
