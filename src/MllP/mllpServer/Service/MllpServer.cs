@@ -81,10 +81,7 @@ public class MllpServer : IMllpServer
             string hl7Data = string.Empty;
              
             while ((bytesReceived = await networkStream.ReadAsync(_receivedByteBuffer, 0, _receivedByteBuffer.Length)) > 0)
-            {
-                
-                _logger.LogInformation("Received {0} bytes from client...", bytesReceived);
-
+            {                                
                 hl7Data += Encoding.UTF8.GetString(_receivedByteBuffer, 0, bytesReceived);
 
                 // Find start of MLLP frame, a VT character ...

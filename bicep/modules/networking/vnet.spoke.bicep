@@ -34,6 +34,12 @@ resource vnet 'Microsoft.Network/virtualNetworks@2021-05-01' = {
           }
         }
       }
+      {
+        name: 'snet-loadbalancer'
+        properties: {
+          addressPrefix: '11.0.3.0/24'
+        }
+      }
     ]
   }
 }
