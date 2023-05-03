@@ -30,11 +30,11 @@ public class CustomProbe : IHealthCheck
         try
         {
             _tcpClient = await _tcpListener.AcceptTcpClientAsync();
-            _logger.LogInformation("Client connected to custom probe");
+            _logger.LogDebug("Client connected to custom probe");
             _networkStream = _tcpClient.GetStream();
             var response = Encoding.ASCII.GetBytes("ACK");
             await _networkStream.WriteAsync(response, 0, response.Length);
-            _logger.LogInformation("Response sent custom probe");
+            _logger.LogDebug("Response sent custom probe");
             _tcpClient.Close();                                     
         }
         catch (System.Exception ex)
@@ -57,7 +57,7 @@ public class CustomProbe : IHealthCheck
             if (_tcpListener != null)
                 _tcpListener.Stop();
 
-            _logger.LogInformation("Custom probe stopped");            
+            _logger.LogDebug("Custom probe stopped");            
         }
         catch (System.Exception ex)
         {

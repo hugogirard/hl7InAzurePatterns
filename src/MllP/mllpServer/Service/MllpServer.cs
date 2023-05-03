@@ -79,49 +79,47 @@ public class MllpServer : IMllpServer
             var totalBytesReceivedFromClient = 0;
             int bytesReceived;
             string hl7Data = string.Empty;
+             
+            while ((bytesReceived = await networkStream.ReadAsync(_receivedByteBuffer, 0, _receivedByteBuffer.Length)) > 0)
+            {
+                
+                _logger.LogInformation("Received {0} bytes from client...", bytesReceived);
 
-            if (networkStream.DataAvailable) 
-            {                
-                while ((bytesReceived = await networkStream.ReadAsync(_receivedByteBuffer, 0, _receivedByteBuffer.Length)) > 0)
+                hl7Data += Encoding.UTF8.GetString(_receivedByteBuffer, 0, bytesReceived);
+
+                // Find start of MLLP frame, a VT character ...
+                var startOfMllpEnvelope = hl7Data.IndexOf(START_OF_BLOCK);
+                if (startOfMllpEnvelope >= 0)
                 {
-                    
-                    _logger.LogInformation("Received {0} bytes from client...", bytesReceived);
-
-                    hl7Data += Encoding.UTF8.GetString(_receivedByteBuffer, 0, bytesReceived);
-
-                    // Find start of MLLP frame, a VT character ...
-                    var startOfMllpEnvelope = hl7Data.IndexOf(START_OF_BLOCK);
-                    if (startOfMllpEnvelope >= 0)
+                    // Now look for the end of the frame, a FS character
+                    var end = hl7Data.IndexOf(END_OF_BLOCK);
+                    if (end >= startOfMllpEnvelope) //end of block received
                     {
-                        // Now look for the end of the frame, a FS character
-                        var end = hl7Data.IndexOf(END_OF_BLOCK);
-                        if (end >= startOfMllpEnvelope) //end of block received
+                        //if both start and end of block are recognized in the data transmitted, then extract the entire message
+                        var hl7MessageData = hl7Data.Substring(startOfMllpEnvelope + 1, end - startOfMllpEnvelope);
+
+                        //create a HL7 acknowledgement message
+                        var ackMessage = GetSimpleAcknowledgementMessage(hl7MessageData);
+                        hl7Data = string.Empty;
+                        Console.WriteLine(ackMessage);
+
+                        //echo the received data back to the client
+                        var buffer = Encoding.UTF8.GetBytes(ackMessage);
+
+                        if (networkStream.CanWrite)
                         {
-                            //if both start and end of block are recognized in the data transmitted, then extract the entire message
-                            var hl7MessageData = hl7Data.Substring(startOfMllpEnvelope + 1, end - startOfMllpEnvelope);
+                            await networkStream.WriteAsync(buffer, 0, buffer.Length);
 
-                            //create a HL7 acknowledgement message
-                            var ackMessage = GetSimpleAcknowledgementMessage(hl7MessageData);
-                            hl7Data = string.Empty;
-                            Console.WriteLine(ackMessage);
-
-                            //echo the received data back to the client
-                            var buffer = Encoding.UTF8.GetBytes(ackMessage);
-
-                            if (networkStream.CanWrite)
-                            {
-                                await networkStream.WriteAsync(buffer, 0, buffer.Length);
-
-                                Console.WriteLine("Ack message was sent back to the client...");
-                            }
+                            Console.WriteLine("Ack message was sent back to the client...");
                         }
                     }
-
-                    totalBytesReceivedFromClient += bytesReceived;
                 }
 
-                _logger.LogInformation("Echoed {0} bytes back to the client.", totalBytesReceivedFromClient);
+                totalBytesReceivedFromClient += bytesReceived;
             }
+
+            _logger.LogInformation("Echoed {0} bytes back to the client.", totalBytesReceivedFromClient);
+            
         }
         catch (System.Exception ex)
         {

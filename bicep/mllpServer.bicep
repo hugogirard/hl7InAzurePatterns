@@ -53,9 +53,21 @@ resource mllpServer 'Microsoft.App/containerApps@2022-10-01' = {
               tcpSocket: {
                 port: 1200                            
               }              
-              periodSeconds: 10
+              periodSeconds: 30
               type: 'Liveness'
             }
+            {
+              tcpSocket: {
+                port: 1200                            
+              }                            
+              type: 'Readiness'
+            } 
+            {
+              tcpSocket: {
+                port: 1200                            
+              }                            
+              type: 'Startup'
+            }                                 
           ]
         }        
       ]
