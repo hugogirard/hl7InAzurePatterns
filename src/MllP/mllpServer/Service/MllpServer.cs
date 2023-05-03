@@ -52,7 +52,7 @@ public class MllpServer : IMllpServer
 
             _tcpListener.Start();
             
-            _logger.LogInformation("Started listening on port ${PORT}");
+            _logger.LogInformation($"Started listening on port {PORT}");
         }
         catch (System.Exception ex)
         {
@@ -73,57 +73,55 @@ public class MllpServer : IMllpServer
             acceptedClient = await _tcpListener.AcceptTcpClientAsync(); // Get client connection
             networkStream = acceptedClient.GetStream(); // Get client stream
 
-            _logger.LogInformation("Client connected");
+            _logger.LogInformation($"Client connected from IP {acceptedClient.Client.RemoteEndPoint?.ToString()}");
 
             // Keep receiving data from client until connection is closed
-            //var totalBytesReceivedFromClient = 0;
+            var totalBytesReceivedFromClient = 0;
             int bytesReceived;
             string hl7Data = string.Empty;
 
-            while ((bytesReceived = await networkStream.ReadAsync(_receivedByteBuffer, 0, _receivedByteBuffer.Length)) > 0)
-            {
-
-                hl7Data += Encoding.UTF8.GetString(_receivedByteBuffer, 0, bytesReceived);
-
-                // Find start of MLLP frame, a VT character ...
-                var startOfMllpEnvelope = hl7Data.IndexOf(START_OF_BLOCK);
-                if (startOfMllpEnvelope >= 0)
+            if (networkStream.DataAvailable) 
+            {                
+                while ((bytesReceived = await networkStream.ReadAsync(_receivedByteBuffer, 0, _receivedByteBuffer.Length)) > 0)
                 {
-                    // Now look for the end of the frame, a FS character
-                    var end = hl7Data.IndexOf(END_OF_BLOCK);
-                    if (end >= startOfMllpEnvelope) //end of block received
+                    
+                    _logger.LogInformation("Received {0} bytes from client...", bytesReceived);
+
+                    hl7Data += Encoding.UTF8.GetString(_receivedByteBuffer, 0, bytesReceived);
+
+                    // Find start of MLLP frame, a VT character ...
+                    var startOfMllpEnvelope = hl7Data.IndexOf(START_OF_BLOCK);
+                    if (startOfMllpEnvelope >= 0)
                     {
-                        //if both start and end of block are recognized in the data transmitted, then extract the entire message
-                        var hl7MessageData = hl7Data.Substring(startOfMllpEnvelope + 1, end - startOfMllpEnvelope);
-
-                        //create a HL7 acknowledgement message
-                        var ackMessage = GetSimpleAcknowledgementMessage(hl7MessageData);
-                        hl7Data = string.Empty;
-                        Console.WriteLine(ackMessage);
-
-                        //echo the received data back to the client
-                        var buffer = Encoding.UTF8.GetBytes(ackMessage);
-
-                        if (networkStream.CanWrite)
+                        // Now look for the end of the frame, a FS character
+                        var end = hl7Data.IndexOf(END_OF_BLOCK);
+                        if (end >= startOfMllpEnvelope) //end of block received
                         {
-                            await networkStream.WriteAsync(buffer, 0, buffer.Length);
+                            //if both start and end of block are recognized in the data transmitted, then extract the entire message
+                            var hl7MessageData = hl7Data.Substring(startOfMllpEnvelope + 1, end - startOfMllpEnvelope);
 
-                            Console.WriteLine("Ack message was sent back to the client...");
+                            //create a HL7 acknowledgement message
+                            var ackMessage = GetSimpleAcknowledgementMessage(hl7MessageData);
+                            hl7Data = string.Empty;
+                            Console.WriteLine(ackMessage);
+
+                            //echo the received data back to the client
+                            var buffer = Encoding.UTF8.GetBytes(ackMessage);
+
+                            if (networkStream.CanWrite)
+                            {
+                                await networkStream.WriteAsync(buffer, 0, buffer.Length);
+
+                                Console.WriteLine("Ack message was sent back to the client...");
+                            }
                         }
                     }
+
+                    totalBytesReceivedFromClient += bytesReceived;
                 }
 
-                // if (networkStream.CanWrite)
-                // {
-                //     //echo the received data back to the client
-                //     await networkStream.WriteAsync(_receivedByteBuffer, 0, bytesReceived);
-                // }
-
-                // totalBytesReceivedFromClient += bytesReceived;
+                _logger.LogInformation("Echoed {0} bytes back to the client.", totalBytesReceivedFromClient);
             }
-
-            //_logger.LogInformation("Echoed {0} bytes back to the client.", totalBytesReceivedFromClient);
-
         }
         catch (System.Exception ex)
         {
