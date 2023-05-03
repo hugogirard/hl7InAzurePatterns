@@ -8,8 +8,7 @@ on:
 
 env:
   IMAGE_NAME: mllp-server
-  REGION: 'eastus' # You can change this to reflect the region where you deploy your ASE
-  
+
 jobs:
   build:
     name: Build container image
@@ -66,9 +65,6 @@ jobs:
         id: createResources
         uses: azure/arm-deploy@v1
         with:
-          subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
-          scope: subscription
-          region: ${{ env.REGION }}
-          deploymentName:  ${{ env.DEPLOYMENT_NAME }}
+          resourceGroupName: 'rg-healhcare-integration'                    
           template: ./bicep/mllpServer.bicep
           parameters: containerEnvironmentName=${{ secrets.ACA_ENV_NAME }} location=${{ env.REGION }} image=${{ secrets.REGISTRY_SERVER }}/mlppserver:${{ github.sha }} azureContainerRegistry=${{ secrets.REGISTRY_SERVER }}  azureContainerRegistryUsername=${{ secrets.REGISTRY_USERNAME }} azureContainerRegistryPassword=${{ secrets.REGISTRY_PASSWORD }}

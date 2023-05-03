@@ -1,3 +1,5 @@
+targetScope = 'resourceGroup'
+
 param containerEnvironmentName string
 param location string
 param azureContainerRegistry string
