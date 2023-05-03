@@ -1,0 +1,48 @@
+name: Create Azure Resources
+
+on:
+  workflow_dispatch:    
+
+jobs:
+  create-azure-resources:
+
+    env:
+      DEPLOYMENT_NAME: healthcare-deployment
+      REGION: 'eastus' # You can change this to reflect the region where you deploy your ASE
+
+    runs-on: ubuntu-latest
+
+    steps:
+      
+      - uses: actions/checkout@v2
+
+      - name: Azure Login
+        uses: Azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: deploy
+        id: createResources
+        uses: azure/arm-deploy@v1
+        with:
+          subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
+          scope: subscription
+          region: ${{ env.REGION }}
+          deploymentName:  ${{ env.DEPLOYMENT_NAME }}
+          template: ./bicep/main.bicep          
+
+      - uses: gliech/create-github-secret-action@v1
+        name: Write Container App Environment Name
+        with:
+          name: ACA_ENV_NAME
+          value: ${{ steps.createResources.outputs.acaEnvName }}
+          pa_token: ${{ secrets.PA_TOKEN }}
+                        
+
+      - uses: gliech/create-github-secret-action@v1
+        name: Write ACR Name
+        with:
+          name: ACR_NAME
+          value: ${{ steps.createResources.outputs.acrname }}
+          pa_token: ${{ secrets.PA_TOKEN }}
+    
