@@ -11,10 +11,10 @@ resource apim 'Microsoft.ApiManagement/service@2022-08-01' = {
   properties: {
     publisherEmail: publisherEmail
     publisherName: publisherName
-    sku: {
-      name: 'Consumption'
-      capacity: 0
-    }
+  }
+  sku: {
+    name: 'Consumption'
+    capacity: 0
   }
 } 
 
