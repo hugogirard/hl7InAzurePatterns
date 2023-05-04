@@ -4,6 +4,7 @@ on:
   push:
    paths:
      - 'bicep/**'
+     - '.github/workflows/infra.yml'
   workflow_dispatch:    
 
 jobs:
@@ -32,7 +33,8 @@ jobs:
           scope: subscription
           region: ${{ env.REGION }}
           deploymentName:  ${{ env.DEPLOYMENT_NAME }}
-          template: ./bicep/main.bicep          
+          template: ./bicep/main.bicep
+          parameters: publisherName=${{ secrets.PUBLISHER_NAME }} publisherEmail=${{ secrets.PUBLISHER_EMAIL }}    
 
       - uses: gliech/create-github-secret-action@v1
         name: Write Container App Environment Name
