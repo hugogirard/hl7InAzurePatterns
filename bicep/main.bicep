@@ -33,6 +33,16 @@ module log 'modules/logging/logging.bicep' = {
   }
 }
 
+module appInsight 'modules/logging/appinsight.bicep' = {
+  scope: resourceGroup(rgSpoke.name)
+  name: 'insight'
+  params: {
+    location: location
+    suffix: suffix
+    workspaceId: log.outputs.logId
+  }
+}
+
 module env 'modules/containerApp/environment.bicep' = {
   scope: resourceGroup(rgSpoke.name)
   name: 'env'
@@ -62,6 +72,17 @@ module asp 'modules/webApp/appservicePlan.bicep' = {
   }
 }
 
+module soapService 'modules/webApp/soapService.bicep' = {
+  scope: resourceGroup(rgSpoke.name)
+  name: 'soapService'
+  params: {
+    appInsightName: appInsight.outputs.appInsightname
+    appServiceId: asp.outputs.aspId
+    location: location
+    suffix: suffix
+  }
+}
+
 module apim 'modules/apim/apim.bicep' = {
   scope: resourceGroup(rgSpoke.name)
   name: 'apim'
@@ -69,7 +90,7 @@ module apim 'modules/apim/apim.bicep' = {
     location: location 
     publisherEmail: publisherEmail
     publisherName: publisherName    
-    suffix: suffix
+    suffix: suffix    
   }
 }
 

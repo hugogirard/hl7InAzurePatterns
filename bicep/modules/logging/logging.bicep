@@ -1,6 +1,7 @@
 param location string
 param suffix string
 
+
 resource logAnalytics 'Microsoft.OperationalInsights/workspaces@2021-06-01' = {
   name: 'log-${suffix}'
   location: location
@@ -12,3 +13,4 @@ resource logAnalytics 'Microsoft.OperationalInsights/workspaces@2021-06-01' = {
 }
 
 output logAnalyticName string = logAnalytics.name
+output logId string = logAnalytics.id
