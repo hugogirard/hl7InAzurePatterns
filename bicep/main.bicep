@@ -1,6 +1,10 @@
 targetScope = 'subscription'
 
 param location string = 'eastus'
+@secure()
+param publisherName string
+@secure()
+param publisherEmail string
 
 var rgName = 'rg-healhcare-integration'
 
@@ -49,6 +53,26 @@ module acr 'modules/registry/registry.bicep' = {
   }
 }
 
+module asp 'modules/webApp/appservicePlan.bicep' = {
+  scope: resourceGroup(rgSpoke.name)
+  name: 'asp'
+  params: {
+    location: location
+    suffix: suffix
+  }
+}
+
+module apim 'modules/apim/apim.bicep' = {
+  scope: resourceGroup(rgSpoke.name)
+  name: 'apim'
+  params: {
+    location: location 
+    publisherEmail: publisherEmail
+    publisherName: publisherName    
+    suffix: suffix
+  }
+}
 
 output acaEnvName string = env.outputs.containerAppEnvName
 output acrName string = acr.outputs.acrName
+output apimName string = apim.outputs.apimName

@@ -1,6 +1,9 @@
 name: Create Azure Resources
 
 on:
+  push:
+   paths:
+     - 'bicep/**'
   workflow_dispatch:    
 
 jobs:
@@ -46,3 +49,10 @@ jobs:
           value: ${{ steps.createResources.outputs.acrname }}
           pa_token: ${{ secrets.PA_TOKEN }}
     
+
+      - uses: gliech/create-github-secret-action@v1
+        name: Write APIM name
+        with:
+          name: APIM_NAME
+          value: ${{ steps.createResources.outputs.apimName }}
+          pa_token: ${{ secrets.PA_TOKEN }}    
