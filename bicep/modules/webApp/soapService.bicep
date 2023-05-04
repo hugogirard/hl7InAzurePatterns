@@ -7,7 +7,7 @@ resource insight 'Microsoft.Insights/components@2020-02-02' existing = {
   name: appInsightName
 }
 
-resource fibonacciApi 'Microsoft.Web/sites@2022-09-01' = {
+resource soap 'Microsoft.Web/sites@2022-09-01' = {
   name: 'soap-${suffix}'
   location: location
   properties: {                
@@ -33,6 +33,7 @@ resource fibonacciApi 'Microsoft.Web/sites@2022-09-01' = {
       netFrameworkVersion: 'v7.0'                 
     }          
     serverFarmId: appServiceId 
-  }
-  
+  } 
 }
+
+output soapWebName string = soap.name

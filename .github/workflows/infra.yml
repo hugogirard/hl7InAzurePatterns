@@ -58,3 +58,10 @@ jobs:
           name: APIM_NAME
           value: ${{ steps.createResources.outputs.apimName }}
           pa_token: ${{ secrets.PA_TOKEN }}    
+
+      - uses: gliech/create-github-secret-action@v1
+        name: Write SoapWeb name
+        with:
+          name: SOAP_WEB_NAME
+          value: ${{ steps.createResources.outputs.soapWebName }}
+          pa_token: ${{ secrets.PA_TOKEN }}            

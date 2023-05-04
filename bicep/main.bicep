@@ -97,3 +97,4 @@ module apim 'modules/apim/apim.bicep' = {
 output acaEnvName string = env.outputs.containerAppEnvName
 output acrName string = acr.outputs.acrName
 output apimName string = apim.outputs.apimName
+output soapWebName string = soapService.outputs.soapWebName
