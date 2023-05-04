@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_WEBAPP_NAME: ${{ secrets.SOAP_WEB_NAME }}
+  AZURE_WEBAPP_NAME: 'soap-q32gwqonlqkxk'
   AZURE_WEBAPP_PACKAGE_PATH: 'src/SoapLegacyService'
   NUGET_VERSION: '5.3.x'
 
