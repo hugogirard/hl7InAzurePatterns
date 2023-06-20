@@ -34,8 +34,7 @@ jobs:
           region: ${{ env.REGION }}
           deploymentName:  ${{ env.DEPLOYMENT_NAME }}
           template: ./bicep/main.bicep
-          parameters: publisherName=${{ secrets.PUBLISHER_NAME }} publisherEmail=${{ secrets.PUBLISHER_EMAIL }}    
-
+          
       - uses: gliech/create-github-secret-action@v1
         name: Write Container App Environment Name
         with:
@@ -52,16 +51,16 @@ jobs:
           pa_token: ${{ secrets.PA_TOKEN }}
     
 
-      - uses: gliech/create-github-secret-action@v1
-        name: Write APIM name
-        with:
-          name: APIM_NAME
-          value: ${{ steps.createResources.outputs.apimName }}
-          pa_token: ${{ secrets.PA_TOKEN }}    
+      # - uses: gliech/create-github-secret-action@v1
+      #   name: Write APIM name
+      #   with:
+      #     name: APIM_NAME
+      #     value: ${{ steps.createResources.outputs.apimName }}
+      #     pa_token: ${{ secrets.PA_TOKEN }}    
 
-      - uses: gliech/create-github-secret-action@v1
-        name: Write SoapWeb name
-        with:
-          name: SOAP_WEB_NAME
-          value: ${{ steps.createResources.outputs.soapWebName }}
-          pa_token: ${{ secrets.PA_TOKEN }}            
+      # - uses: gliech/create-github-secret-action@v1
+      #   name: Write SoapWeb name
+      #   with:
+      #     name: SOAP_WEB_NAME
+      #     value: ${{ steps.createResources.outputs.soapWebName }}
+      #     pa_token: ${{ secrets.PA_TOKEN }}            

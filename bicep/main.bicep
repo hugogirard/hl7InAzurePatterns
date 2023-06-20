@@ -1,12 +1,9 @@
 targetScope = 'subscription'
 
 param location string = 'eastus'
-@secure()
-param publisherName string
-@secure()
-param publisherEmail string
 
-var rgName = 'rg-healhcare-integration'
+
+var rgName = 'rg-mllp'
 
 var suffix = uniqueString(rgSpoke.id)
 
@@ -72,29 +69,29 @@ module asp 'modules/webApp/appservicePlan.bicep' = {
   }
 }
 
-module soapService 'modules/webApp/soapService.bicep' = {
-  scope: resourceGroup(rgSpoke.name)
-  name: 'soapService'
-  params: {
-    appInsightName: appInsight.outputs.appInsightname
-    appServiceId: asp.outputs.aspId
-    location: location
-    suffix: suffix
-  }
-}
+// module soapService 'modules/webApp/soapService.bicep' = {
+//   scope: resourceGroup(rgSpoke.name)
+//   name: 'soapService'
+//   params: {
+//     appInsightName: appInsight.outputs.appInsightname
+//     appServiceId: asp.outputs.aspId
+//     location: location
+//     suffix: suffix
+//   }
+// }
 
-module apim 'modules/apim/apim.bicep' = {
-  scope: resourceGroup(rgSpoke.name)
-  name: 'apim'
-  params: {
-    location: location 
-    publisherEmail: publisherEmail
-    publisherName: publisherName    
-    suffix: suffix    
-  }
-}
+// module apim 'modules/apim/apim.bicep' = {
+//   scope: resourceGroup(rgSpoke.name)
+//   name: 'apim'
+//   params: {
+//     location: location 
+//     publisherEmail: publisherEmail
+//     publisherName: publisherName    
+//     suffix: suffix    
+//   }
+// }
 
 output acaEnvName string = env.outputs.containerAppEnvName
 output acrName string = acr.outputs.acrName
-output apimName string = apim.outputs.apimName
-output soapWebName string = soapService.outputs.soapWebName
+// output apimName string = apim.outputs.apimName
+// output soapWebName string = soapService.outputs.soapWebName
