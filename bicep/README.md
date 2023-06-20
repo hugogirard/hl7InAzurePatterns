@@ -1,0 +1,1 @@
+ az group deployment create --resource-group rg-aca-lb -n 'deploymllp' -f .\mllpServer.bicep -p .\mllpServer.parameters.json

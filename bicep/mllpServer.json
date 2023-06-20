@@ -1,0 +1,101 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.15.31.15270",
+      "templateHash": "4098564715673061049"
+    }
+  },
+  "parameters": {
+    "containerEnvironmentName": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "eastus"
+    },
+    "azureContainerRegistry": {
+      "type": "string"
+    },
+    "azureContainerRegistryUsername": {
+      "type": "securestring"
+    },
+    "azureContainerRegistryPassword": {
+      "type": "securestring"
+    },
+    "image": {
+      "type": "string"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.App/containerApps",
+      "apiVersion": "2022-10-01",
+      "name": "mllp-server",
+      "location": "[parameters('location')]",
+      "properties": {
+        "managedEnvironmentId": "[resourceId('Microsoft.App/managedEnvironments', parameters('containerEnvironmentName'))]",
+        "configuration": {
+          "secrets": [
+            {
+              "name": "containerregistrypasswordref",
+              "value": "[parameters('azureContainerRegistryPassword')]"
+            }
+          ],
+          "ingress": {
+            "external": true,
+            "exposedPort": 1080,
+            "targetPort": 1080,
+            "transport": "tcp"
+          },
+          "registries": [
+            {
+              "server": "[parameters('azureContainerRegistry')]",
+              "username": "[parameters('azureContainerRegistryUsername')]",
+              "passwordSecretRef": "containerregistrypasswordref"
+            }
+          ]
+        },
+        "template": {
+          "containers": [
+            {
+              "image": "[parameters('image')]",
+              "name": "mllp-server",
+              "resources": {
+                "cpu": 1,
+                "memory": "2Gi"
+              },
+              "probes": [
+                {
+                  "tcpSocket": {
+                    "port": 1200
+                  },
+                  "periodSeconds": 30,
+                  "type": "Liveness"
+                },
+                {
+                  "tcpSocket": {
+                    "port": 1200
+                  },
+                  "type": "Readiness"
+                },
+                {
+                  "tcpSocket": {
+                    "port": 1200
+                  },
+                  "type": "Startup"
+                }
+              ]
+            }
+          ],
+          "scale": {
+            "minReplicas": 1,
+            "maxReplicas": 1
+          }
+        }
+      }
+    }
+  ]
+}
