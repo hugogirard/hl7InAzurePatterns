@@ -62,6 +62,6 @@ jobs:
         id: createResources
         uses: azure/arm-deploy@v1
         with:
-          resourceGroupName: 'rg-healhcare-integration'                    
+          resourceGroupName: 'rg-mllp'                    
           template: ./bicep/mllpServer.bicep
           parameters: containerEnvironmentName=${{ secrets.ACA_ENV_NAME }} image=${{ secrets.REGISTRY_SERVER }}/mlppserver:${{ github.sha }} azureContainerRegistry=${{ secrets.REGISTRY_SERVER }}  azureContainerRegistryUsername=${{ secrets.REGISTRY_USERNAME }} azureContainerRegistryPassword=${{ secrets.REGISTRY_PASSWORD }}
